@@ -3,27 +3,28 @@ module Phase6
     attr_reader :pattern, :http_method, :controller_class, :action_name
 
     def initialize(pattern, http_method, controller_class, action_name)
-      @pattern = pattern
-      @http_method = http_method
+      @pattern = Regexp.new(pattern.to_s)
+      @http_method = http_method.to_s
       @controller_class = controller_class
-      @action_name = action_name
+      @action_name = action_name.to_s
     end
 
     # checks if pattern matches path and method matches request method
     def matches?(req)
-      #ned to use this to prevent method from returning nil rather than false
-      if (@pattern.match(req.path) &&
-         (http_method == req.request_method.downcase.to_sym))
-        true
-      else
-        false
-      end
+      !!@pattern.match(req.path) && (http_method == req.request_method.downcase.to_s)
     end
 
     # use pattern to pull out route params (save for later?)
     # instantiate controller and call controller action
     def run(req, res)
-      @controller_class.new(req, res).invoke_ation(action_name)
+      matched_params = @pattern.match(req.path)
+      route_params = {}
+      if matched_params.names
+        matched_params.names.each do |name|
+          route_params[name] = matched_params[name]
+        end
+      end
+      @controller_class.new(req, res, route_params).invoke_action(action_name)
     end
   end
 
@@ -61,6 +62,7 @@ module Phase6
     # either throw 404 or call run on a matched route
     def run(req, res)
       route = match(req)
+      route_params =
       if route
         route.run(req, res)
       else

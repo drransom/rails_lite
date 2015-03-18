@@ -9,9 +9,9 @@ module Phase3
     # use ERB and binding to evaluate templates
     # pass the rendered html to render_content
     def render(template_name)
-      filename = File.expand_path("~/Desktop/skeleton") + "/views/#{self.class.name.underscore}/#{template_name}.html.erb"
-      puts "filename is #{filename}"
+      filename = File.expand_path("~/Desktop/rails_lite") + "/views/#{self.class.name.underscore}/#{template_name}.html.erb"
       content = ERB.new(File.read(filename)).result(binding)
+      #byebug
       render_content(content, "text/html")
     end
   end

@@ -2,29 +2,18 @@ require 'uri'
 
 module Phase5
   class Params
-    # use your initialize to merge params from
-    # 1. query string
-    # 2. post body
-    # 3. route params
-    #
-    # You haven't done routing yet; but assume route params will be
-    # passed in as a hash to `Params.new` as below:
+
     def initialize(req, route_params = {})
-      # decoded_string = if req.query_string
-      #   parse_www_encoded_form(req.query_string)
-      # else
-      #   {}
-      # end
       @params = decode_string(req.query_string)
-                .merge(decode_string(req.body))
-                .merge(route_params)
+        .merge(decode_string(req.body))
+        .merge(route_params)
     end
 
     def [](key)
       @params[key.to_s]
     end
 
-    def to_s
+    def to_sn
       @params.to_json.to_s
     end
 
@@ -45,7 +34,7 @@ module Phase5
     end
 
     def parse_www_encoded_form(www_encoded_form)
-      debugger
+
       key_values = www_encoded_form.split('&')
       parsed_hash = {}
       key_values.each do |key_value|
@@ -55,30 +44,13 @@ module Phase5
         keys = parse_key(keys)
         new_value = parse_nested_keys(keys[1..-1], value)
         if parsed_hash[keys[0]].is_a?(Hash)
-          parsed_hash[keys[0]] = friendly_merge(parsed_hash[keys[0]], new_value)
+          parsed_hash[keys[0]] = parsed_hash[keys[0]].deep_merge(new_value)
         else
           parsed_hash[keys[0]] = new_value
         end
       end
       parsed_hash
     end
-
-    def friendly_merge(hash1, hash2)
-      new_hash = {}
-      hash1.each do |key, value|
-        if value.is_a?(Hash) && hash2[key].is_a?(Hash)
-          new_hash[key] = friendly_merge(value, hash2[key])
-        else
-          new_hash[key] = value
-        end
-      end
-      hash2.merge(new_hash)
-    end
-
-
-    #   end
-    #   URI.decode_www_form(www_encoded_form).to_h
-    # end
 
     # this should return an array
     # user[address][street] should return ['user', 'address', 'street']
