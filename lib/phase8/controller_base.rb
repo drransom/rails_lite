@@ -10,7 +10,6 @@ module Phase8
 
     def render_content(content, content_type)
       super(content, content_type)
-      flash.store_flash(res)
     end
 
     def flash

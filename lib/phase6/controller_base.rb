@@ -1,4 +1,5 @@
 require_relative '../phase5/controller_base'
+require_relative './router.rb'
 
 module Phase6
   class ControllerBase < Phase5::ControllerBase

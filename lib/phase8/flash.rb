@@ -6,7 +6,7 @@ module Phase8
   class Flash
     def initialize(req)
       cookie = req.cookies.find do |cookie|
-        cookie.name == '_rails_lite_app_flash'
+        cookie.name == '_rails_lite_flash'
       end
       if cookie
         content = JSON.parse(cookie.value)
@@ -34,7 +34,7 @@ module Phase8
       stored_flash = @flash.reject do |key, value|
         key == :now || @flash[:now][key] == value
       end
-      res.cookies << WEBrick::Cookie.new('_rails_lite_app_flash',
+      res.cookies << WEBrick::Cookie.new('_rails_lite_flash',
                                          stored_flash.to_json)
     end
   end
